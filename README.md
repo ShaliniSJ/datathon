@@ -1,8 +1,8 @@
 # How to run the backend?
+
+> ### Run the csv_to_parquet.py
+
 > ## `flask --app index.py run` 
-
-
-
 
 ## Datathon Karnataka Police Hackathon
 
