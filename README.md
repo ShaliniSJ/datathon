@@ -1,3 +1,9 @@
+# How to run the backend?
+> ## `flask --app index.py run` 
+
+
+
+
 ## Datathon Karnataka Police Hackathon
 
 Predictive Crime Analysis <br>
