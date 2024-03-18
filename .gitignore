@@ -6,6 +6,9 @@ __pycache__/
 # C extensions
 *.so
 
+#ignore dataset folder
+Predictive Crime Analytics/
+
 # Distribution / packaging
 .Python
 build/
