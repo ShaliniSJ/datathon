@@ -1,14 +1,5 @@
-from flask import Flask, request, jsonify
-from flask_cors import CORS
 import pandas as pd
-import numpy as np
-import os, sys
 
-# sys.path.append(os.path.abspath(os.path.join("..", "Predictive Crime Analytics")))
-
-
-app = Flask(__name__)
-CORS(app)
 
 accused_data = pd.read_parquet("Predictive Crime Analytics/AccusedData.parquet")
 complainant_details = pd.read_parquet(
@@ -17,17 +8,17 @@ complainant_details = pd.read_parquet(
 victim_info = pd.read_parquet("Predictive Crime Analytics/VictimInfoDetails.parquet")
 fir_details = pd.read_csv("Predictive Crime Analytics/FIR_Details_Data.csv")
 
+def csv_to_parquet():
 
-@app.route("/")
-def hello():
-    print(accused_data.head())
-    print(complainant_details.head())
-    print(victim_info.head())
+    files = ['Predictive Crime Analytics/AccusedData.csv', 'Predictive Crime Analytics/ComplainantDetailsData.csv', 'Predictive Crime Analytics/VictimInfoDetails.csv', 'Predictive Crime Analytics/FIR_Details_Data.csv']
+    for i in files:
+    # Load CSV file into a pandas DataFrame
+        df = pd.read_csv(i)
 
-    return "<h1>Hello, World!</h1>"
+        # Convert DataFrame to Parquet format
+        df.to_parquet(i.split('.')[0] + '.parquet', engine='pyarrow')
 
 
-@app.route("/analytics/victim")
 def get_victim_info():
     response = {"status": "success", "data": {}}
     print(request.args)
@@ -41,7 +32,3 @@ def get_victim_info():
         response["data"]["56-65"] = len(victim_info[(victim_info["age"] >= 56) & (victim_info["age"] <= 65)])
         response["data"]["65+"] = len(victim_info[(victim_info["age"] > 65)])
     return jsonify(response)
-
-
-if __name__ == "__main__":
-    app.run(debug=True)
