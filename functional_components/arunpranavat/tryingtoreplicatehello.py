@@ -3,7 +3,7 @@ import pandas as pd
 import pydeck as pdk
 
 # Load victim data from Parquet file
-mapped_data = pd.read_csv(r"C:\Users\Legion\Desktop\KSP DATATHON\datathon\functional_components\Predictive Crime Analytics\VictimInfoDetails.csv")
+mapped_data = pd.read_csv(r"D:\KRK Datathon\Predictive Crime Analytics\VictimInfoDetails.csv")
 
 # Coordinates of Karnataka districts
 karnataka_districts = {
@@ -74,7 +74,7 @@ district_profession_count["longitude"] = district_profession_count["District_Nam
 
 
 
-def mapping_demo(data, layers):
+def mapping_demo(layers):
     st.pydeck_chart(
         pdk.Deck(
             map_style="mapbox://styles/mapbox/light-v9",
@@ -90,33 +90,41 @@ ALL_LAYERS = {
         data=district_year_age,
         get_position=["longitude", "latitude"],
         get_color="[VictimCount, 0, 255, 255]",
-        get_radius=1000,
+        get_radius=10000,
     ),
     "Victim Count District-wise based on Injury Type and Year": pdk.Layer(
         "ScatterplotLayer",
         data=district_injury_year,
         get_position=["longitude", "latitude"],
         get_color="[VictimCount, 255, 0, 255]",
-        get_radius=1000,
+        get_radius=10000,
     ),
     "Victim Count Unit-wise in Each District": pdk.Layer(
         "ScatterplotLayer",
         data=district_unit_count,
         get_position=["longitude", "latitude"],
         get_color="[VictimCount, 255, 255, 0]",
-        get_radius=1000,
+        get_radius=10000,
     ),
     "Victim Count Profession-wise in Each District": pdk.Layer(
         "ScatterplotLayer",
         data=district_profession_count,
         get_position=["longitude", "latitude"],
         get_color="[VictimCount, 255, 0, 0]",
-        get_radius=1000,
+        get_radius=10000,
     ),
 }
 
-st.set_page_config(page_title="KSP Crime Analytics", page_icon="🌍")
-st.markdown("# Mapping Demo")
-st.sidebar.header("Mapping Demo")
+# Define the main function
+def main():
+    st.set_page_config(page_title="KSP Crime Analytics", page_icon="🌍")
+    st.markdown("# Mapping Demo")
+    st.sidebar.header("Mapping Demo")
+    
+    selected_layer = st.sidebar.radio("Select Layer", list(ALL_LAYERS.keys()))
+    
+    # Show selected layer
+    mapping_demo([ALL_LAYERS[selected_layer]])
 
-mapping_demo(karnataka_districts, ALL_LAYERS)
+if __name__ == "__main__":
+    main()
