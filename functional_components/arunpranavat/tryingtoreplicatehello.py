@@ -2,17 +2,8 @@ import streamlit as st
 import pandas as pd
 import pydeck as pdk
 
-# Load victim data from CSV
-mapped_data = pd.read_csv("D:\\KRK Datathon\\Predictive Crime Analytics\\VictimInfoDetails.csv")
-
-# Filter relevant columns
-victim_data = mapped_data[["District_Name", "Year", "age", "InjuryType", "UnitName", "Profession"]]
-
-# Group data for graphs
-district_year_age = victim_data.groupby(["District_Name", "Year", "age"]).size().reset_index(name="VictimCount")
-district_injury_year = victim_data.groupby(["District_Name", "InjuryType", "Year"]).size().reset_index(name="VictimCount")
-district_unit_count = victim_data.groupby(["District_Name", "UnitName"]).size().reset_index(name="VictimCount")
-district_profession_count = victim_data.groupby(["District_Name", "Profession"]).size().reset_index(name="VictimCount")
+# Load victim data from Parquet file
+mapped_data = pd.read_parquet("D:\\KRK Datathon\\Predictive Crime Analytics\\VictimInfoDetails.parquet")
 
 # Coordinates of Karnataka districts
 karnataka_districts = {
@@ -46,6 +37,30 @@ karnataka_districts = {
     "Yadgir": (16.8000, 77.0200)
 }
 
+# Filter relevant columns
+victim_data = mapped_data[["District_Name", "Year", "age", "InjuryType", "UnitName", "Profession"]]
+
+# Group data for graphs
+district_year_age = victim_data.groupby(["District_Name", "Year", "age"]).size().reset_index(name="VictimCount")
+district_injury_year = victim_data.groupby(["District_Name", "InjuryType", "Year"]).size().reset_index(name="VictimCount")
+district_unit_count = victim_data.groupby(["District_Name", "UnitName"]).size().reset_index(name="VictimCount")
+district_profession_count = victim_data.groupby(["District_Name", "Profession"]).size().reset_index(name="VictimCount")
+
+# Add latitude and longitude columns to each DataFrame using the karnataka_districts dictionary
+district_year_age["latitude"] = district_year_age["District_Name"].map(lambda x: karnataka_districts.get(x, (None, None))[0])
+district_year_age["longitude"] = district_year_age["District_Name"].map(lambda x: karnataka_districts.get(x, (None, None))[1])
+
+district_injury_year["latitude"] = district_injury_year["District_Name"].map(lambda x: karnataka_districts.get(x, (None, None))[0])
+district_injury_year["longitude"] = district_injury_year["District_Name"].map(lambda x: karnataka_districts.get(x, (None, None))[1])
+
+district_unit_count["latitude"] = district_unit_count["District_Name"].map(lambda x: karnataka_districts.get(x, (None, None))[0])
+district_unit_count["longitude"] = district_unit_count["District_Name"].map(lambda x: karnataka_districts.get(x, (None, None))[1])
+
+district_profession_count["latitude"] = district_profession_count["District_Name"].map(lambda x: karnataka_districts.get(x, (None, None))[0])
+district_profession_count["longitude"] = district_profession_count["District_Name"].map(lambda x: karnataka_districts.get(x, (None, None))[1])
+
+
+
 def mapping_demo(data, layers):
     st.pydeck_chart(
         pdk.Deck(
@@ -60,28 +75,28 @@ ALL_LAYERS = {
     "Victim Count District-wise based on Year and Age": pdk.Layer(
         "ScatterplotLayer",
         data=district_year_age,
-        get_position=["District_Name.longitude", "District_Name.latitude"],
+        get_position=["longitude", "latitude"],
         get_color="[VictimCount, 0, 255, 255]",
         get_radius=1000,
     ),
     "Victim Count District-wise based on Injury Type and Year": pdk.Layer(
         "ScatterplotLayer",
         data=district_injury_year,
-        get_position=["District_Name.longitude", "District_Name.latitude"],
+        get_position=["longitude", "latitude"],
         get_color="[VictimCount, 255, 0, 255]",
         get_radius=1000,
     ),
     "Victim Count Unit-wise in Each District": pdk.Layer(
         "ScatterplotLayer",
         data=district_unit_count,
-        get_position=["District_Name.longitude", "District_Name.latitude"],
+        get_position=["longitude", "latitude"],
         get_color="[VictimCount, 255, 255, 0]",
         get_radius=1000,
     ),
     "Victim Count Profession-wise in Each District": pdk.Layer(
         "ScatterplotLayer",
         data=district_profession_count,
-        get_position=["District_Name.longitude", "District_Name.latitude"],
+        get_position=["longitude", "latitude"],
         get_color="[VictimCount, 255, 0, 0]",
         get_radius=1000,
     ),
@@ -92,97 +107,3 @@ st.markdown("# Mapping Demo")
 st.sidebar.header("Mapping Demo")
 
 mapping_demo(karnataka_districts, ALL_LAYERS)
-
-
-
-
-'''
-import streamlit as st
-import inspect
-import textwrap
-import pandas as pd
-import pydeck as pdk
-from urllib.error import URLError
-
-mapped_data = pd.read_csv("D:\\KRK Datathon\\Predictive Crime Analytics\\VictimInfoDetails.csv")
-
-def mapping_demo():
-    try:
-        ALL_LAYERS = {
-            "Bike Rentals": pdk.Layer(
-                "HexagonLayer",
-                data=mapped_data,
-                get_position=["lon", "lat"],
-                radius=200,
-                elevation_scale=4,
-                elevation_range=[0, 1000],
-                extruded=True,
-            ),
-            "Bart Stop Exits": pdk.Layer(
-                "ScatterplotLayer",
-                data=mapped_data,
-                get_position=["lon", "lat"],
-                get_color=[200, 30, 0, 160],
-                get_radius="[exits]",
-                radius_scale=0.05,
-            ),
-            "Bart Stop Names": pdk.Layer(
-                "TextLayer",
-                data=mapped_data,
-                get_position=["lon", "lat"],
-                get_text="name",
-                get_color=[0, 0, 0, 200],
-                get_size=15,
-                get_alignment_baseline="'bottom'",
-            ),
-            "Outbound Flow": pdk.Layer(
-                "ArcLayer",
-                data=mapped_data,
-                get_source_position=["lon", "lat"],
-                get_target_position=["lon2", "lat2"],
-                get_source_color=[200, 30, 0, 160],
-                get_target_color=[200, 30, 0, 160],
-                auto_highlight=True,
-                width_scale=0.0001,
-                get_width="outbound",
-                width_min_pixels=3,
-                width_max_pixels=30,
-            ),
-        }
-        st.sidebar.markdown("### Map Layers")
-        selected_layers = [
-            layer
-            for layer_name, layer in ALL_LAYERS.items()
-            if st.sidebar.checkbox(layer_name, True)
-        ]
-        if selected_layers:
-            st.pydeck_chart(
-                pdk.Deck(
-                    map_style="mapbox://styles/mapbox/light-v9",
-                    initial_view_state={
-                        "latitude": 10,
-                        "longitude": 80,
-                        "zoom": 11,
-                        "pitch": 50,
-                    },
-                    layers=selected_layers,
-                )
-            )
-        else:
-            st.error("Please choose at least one layer above.")
-    except URLError as e:
-        st.error(
-            """
-            **This demo requires internet access.**
-            Connection error: %s
-        """
-            % e.reason
-        )
-
-
-st.set_page_config(page_title="KSP Crime Analytics", page_icon="🌍")
-st.markdown("# Mapping Demo")
-st.sidebar.header("Mapping Demo")
-
-mapping_demo()
-'''
