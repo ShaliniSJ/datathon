@@ -1,1 +1,7 @@
 pandas
+streamlit
+altair
+plotly
+matplotlib
+seaborn
+geopy
