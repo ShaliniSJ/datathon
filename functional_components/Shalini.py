@@ -1,6 +1,4 @@
 import pandas as pd
-
-
 accused_data = pd.read_parquet("Predictive Crime Analytics/AccusedData.parquet")
 complainant_details = pd.read_parquet(
     "Predictive Crime Analytics/ComplainantDetailsData.parquet"
