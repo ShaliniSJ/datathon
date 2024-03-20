@@ -3,7 +3,7 @@ import pandas as pd
 import pydeck as pdk
 
 # Load victim data from Parquet file
-mapped_data = pd.read_parquet("D:\\KRK Datathon\\Predictive Crime Analytics\\VictimInfoDetails.parquet")
+mapped_data = pd.read_parquet(r"D:\KRK Datathon\Predictive Crime Analytics\VictimInfoDetails.parquet")
 
 # Coordinates of Karnataka districts
 karnataka_districts = {
