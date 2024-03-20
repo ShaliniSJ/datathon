@@ -3,7 +3,7 @@ import pandas as pd
 import pydeck as pdk
 
 # Load victim data from Parquet file
-mapped_data = pd.read_csv(r"D:\KRK Datathon\Predictive Crime Analytics\VictimInfoDetails.csv")
+mapped_data = pd.read_csv("../../Predictive Crime Analytics/VictimInfoDetails.csv")
 
 # Coordinates of Karnataka districts
 karnataka_districts = {
