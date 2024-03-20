@@ -4,10 +4,10 @@ import pydeck as pdk
 import json
 
 # Load accused data from CSV file
-accused_data = pd.read_csv(r"C:\\Users\\Legion\\Desktop\\KSP DATATHON\\datathon\\functional_components\\Predictive Crime Analytics\\AccusedData.csv")
+accused_data = pd.read_csv(r"C:\Users\Legion\Desktop\KSP DATATHON\datathon\functional_components\Predictive Crime Analytics\AccusedData.csv")
 
 # Load Karnataka GeoJSON file for district coordinates
-with open(r"C:\\Users\\Legion\\Desktop\\KSP DATATHON\datathon\\functional_components\\images\\karnataka.json", 'r') as f:
+with open(r"C:\Users\Legion\Desktop\KSP DATATHON\datathon\functional_components\images\karnataka.json", 'r') as f:
     karnataka_geojson = json.load(f)
 
 # Extract district coordinates from GeoJSON file
@@ -29,13 +29,12 @@ for feature in karnataka_geojson['features']:
 # Filter relevant columns from accused data
 accused_data_filtered = accused_data[["District_Name", "Year", "age", "Caste", "Profession", "Sex", "Month"]]
 
-# Define function to apply filters and create heatmap based on selected filters
-def create_heatmap(selected_lower_age, selected_upper_age, selected_sex, selected_month):
+# Function to create a visualization based on selected filters
+def create_heatmap(selected_age, selected_sex, selected_month, selected_layers):
     # Apply filters
     filtered_data = accused_data_filtered[
-        (accused_data_filtered["age"] >= selected_lower_age) &
-        (accused_data_filtered["age"] <= selected_upper_age) &
-        (accused_data_filtered["Sex"] == selected_sex) &
+        (accused_data_filtered["age"].between(selected_age[0], selected_age[1])) &
+        (accused_data_filtered["Sex"].isin(selected_sex)) &
         (accused_data_filtered["Month"] == selected_month)
     ]
 
@@ -47,8 +46,8 @@ def create_heatmap(selected_lower_age, selected_upper_age, selected_sex, selecte
     grouped_data["longitude"] = grouped_data["District_Name"].map(lambda x: karnataka_districts.get(x, (None, None))[1])
 
     # Define pydeck layers for visualization
-    layers = [
-        pdk.Layer(
+    ALL_LAYERS = {
+        "Heatmap": pdk.Layer(
             "HeatmapLayer",
             data=grouped_data,
             get_position=["longitude", "latitude"],
@@ -56,39 +55,61 @@ def create_heatmap(selected_lower_age, selected_upper_age, selected_sex, selecte
             get_weight="AccusedCount",
             radius=5000,
         ),
-        pdk.Layer(
+        "Hexagon": pdk.Layer(
+            "HexagonLayer",
+            data=grouped_data,
+            get_position=["longitude", "latitude"],
+            auto_highlight=True,
+            radius=5000,
+            elevation_scale=50,
+            elevation_range=[0, 1000],
+            extruded=True,
+        ),
+        "District Borders": pdk.Layer(
             "GeoJsonLayer",
             data=karnataka_geojson,
             filled=False,
             stroked=True,
             lineWidthMinPixels=2,
             get_line_color=[255, 0, 0],
-        )
+        ),
+    }
+
+    st.sidebar.markdown("### Map Layers")
+    selected_layers = [
+        layer
+        for layer_name, layer in ALL_LAYERS.items()
+        if st.sidebar.checkbox(layer_name, True)
     ]
-
-    # Display the map with selected filters
-    st.pydeck_chart(
-        pdk.Deck(
-            map_style="mapbox://styles/mapbox/light-v9",
-            initial_view_state={"latitude": 14.5204, "longitude": 75.7224, "zoom": 7, "pitch": 50},
-            layers=layers,
+    if selected_layers:
+        st.pydeck_chart(
+            pdk.Deck(
+                map_style="mapbox://styles/mapbox/dark-v9",
+                initial_view_state={
+                    "latitude": 14.5204,
+                    "longitude": 75.7224,
+                    "zoom": 7,
+                    "pitch": 50,
+                },
+                layers=selected_layers,
+            )
         )
-    )
+    else:
+        st.error("Please choose at least one layer above.")
 
-# Display the filters and create heatmap based on selected filters
+# Display the app
 st.set_page_config(page_title="KSP Crime Analytics", page_icon="🌍")
-st.markdown("# Accused Heatmap Demo")
-st.sidebar.header("Accused Heatmap Filters")
+st.markdown("# Accused Mapping Demo")
+st.sidebar.header("Accused Filters")
 
-# Define filter options
-sex_options = accused_data_filtered["Sex"].unique().tolist()
-month_options = accused_data_filtered["Month"].unique().tolist()
+# Sidebar UI for filter selection
+selected_age = st.sidebar.slider("Select Age Limit", 0, 120, (0, 120), key="sidebar_age_slider")
+selected_sex = []
+if st.sidebar.checkbox("Male", True, key="sidebar_male_checkbox"):
+    selected_sex.append("MALE")
+if st.sidebar.checkbox("Female", True, key="sidebar_female_checkbox"):
+    selected_sex.append("FEMALE")
+selected_month = st.sidebar.slider("Select Month", 1, 12, 1, key="sidebar_month_slider")
 
-# Add filter widgets
-selected_lower_age = st.sidebar.number_input("Lower Age Limit:", min_value=0, max_value=120, step=1, value=0)
-selected_upper_age = st.sidebar.number_input("Upper Age Limit:", min_value=0, max_value=120, step=1, value=120)
-selected_sex = st.sidebar.selectbox("Select Sex:", sex_options)
-selected_month = st.sidebar.selectbox("Select Month:", month_options)
-
-# Display heatmap based on selected filters
-create_heatmap(selected_lower_age, selected_upper_age, selected_sex, selected_month)
+# Call create_heatmap with user selected inputs
+create_heatmap(selected_age, selected_sex, selected_month, [])
