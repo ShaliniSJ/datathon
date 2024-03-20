@@ -2,8 +2,8 @@ import streamlit as st
 import pandas as pd
 import pydeck as pdk
 
-# Load victim data from Parquet file
-mapped_data = pd.read_csv("../../Predictive Crime Analytics/VictimInfoDetails.csv")
+# Load victim data from CSV file
+mapped_data = pd.read_csv("D:\\KRK Datathon\\datathon\\Predictive Crime Analytics\\VictimInfoDetails.csv")
 
 # Coordinates of Karnataka districts
 karnataka_districts = {
@@ -51,13 +51,13 @@ karnataka_districts = {
 }
 
 # Filter relevant columns
-victim_data = mapped_data[["District_Name", "Year", "age", "InjuryType", "UnitName", "Profession"]]
+victim_data = mapped_data[["District_Name", "Year", "age", "InjuryType", "UnitName", "Profession", "VictimCount"]]
 
 # Group data for graphs
-district_year_age = victim_data.groupby(["District_Name", "Year", "age"]).size().reset_index(name="VictimCount")
-district_injury_year = victim_data.groupby(["District_Name", "InjuryType", "Year"]).size().reset_index(name="VictimCount")
-district_unit_count = victim_data.groupby(["District_Name", "UnitName"]).size().reset_index(name="VictimCount")
-district_profession_count = victim_data.groupby(["District_Name", "Profession"]).size().reset_index(name="VictimCount")
+district_year_age = victim_data.groupby(["District_Name", "Year", "age"]).sum().reset_index()
+district_injury_year = victim_data.groupby(["District_Name", "InjuryType", "Year"]).sum().reset_index()
+district_unit_count = victim_data.groupby(["District_Name", "UnitName"]).sum().reset_index()
+district_profession_count = victim_data.groupby(["District_Name", "Profession"]).sum().reset_index()
 
 # Add latitude and longitude columns to each DataFrame using the karnataka_districts dictionary
 district_year_age["latitude"] = district_year_age["District_Name"].map(lambda x: karnataka_districts.get(x, (None, None))[0])
@@ -72,7 +72,14 @@ district_unit_count["longitude"] = district_unit_count["District_Name"].map(lamb
 district_profession_count["latitude"] = district_profession_count["District_Name"].map(lambda x: karnataka_districts.get(x, (None, None))[0])
 district_profession_count["longitude"] = district_profession_count["District_Name"].map(lambda x: karnataka_districts.get(x, (None, None))[1])
 
-
+COLOR_BREWER_BLUE_SCALE = [
+    [240, 249, 232],
+    [204, 235, 197],
+    [168, 221, 181],
+    [123, 204, 196],
+    [67, 162, 202],
+    [8, 104, 172],
+]
 
 def mapping_demo(layers):
     st.pydeck_chart(
@@ -86,11 +93,15 @@ def mapping_demo(layers):
 # Define pydeck layers for different graphs
 ALL_LAYERS = {
     "Victim Count District-wise based on Year and Age": pdk.Layer(
-        "ScatterplotLayer",
+        "HeatmapLayer",
         data=district_year_age,
+        opacity=0.9,
         get_position=["longitude", "latitude"],
-        get_color="[VictimCount, 0, 255, 255]",
-        get_radius=10000,
+        aggregation=pdk.types.String("SUM"),
+        color_range=COLOR_BREWER_BLUE_SCALE,
+        threshold=1,
+        get_weight="VictimID",
+        pickable=True,
     ),
     "Victim Count District-wise based on Injury Type and Year": pdk.Layer(
         "ScatterplotLayer",
