@@ -3,11 +3,11 @@ import pandas as pd
 import pydeck as pdk
 import json
 
-# Load accused data from CSV file
-accused_data = pd.read_csv(r"C:\Users\Legion\Desktop\KSP DATATHON\datathon\functional_components\Predictive Crime Analytics\AccusedData.csv")
+# Load accused data from Parquet file
+accused_data = pd.read_csv(r"../../Predictive Crime Analytics/AccusedData.csv")
 
 # Load Karnataka GeoJSON file for district coordinates
-with open(r"C:\Users\Legion\Desktop\KSP DATATHON\datathon\functional_components\images\karnataka.json", 'r') as f:
+with open(r"../images/karnataka.json", 'r') as f:
     karnataka_geojson = json.load(f)
 
 # Extract district coordinates from GeoJSON file
@@ -72,6 +72,10 @@ def create_heatmap(selected_age, selected_sex, selected_month, selected_layers):
             stroked=True,
             lineWidthMinPixels=2,
             get_line_color=[255, 0, 0],
+            get_text="properties.district",
+            get_text_color=[0, 255, 0],  # Green color for district names
+            get_text_size=20,
+            get_text_anchor="middle",
         ),
     }
 
