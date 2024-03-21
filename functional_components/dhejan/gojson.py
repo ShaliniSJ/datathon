@@ -4,10 +4,10 @@ import pydeck as pdk
 import json
 
 # Load accused data from CSV file
-accused_data = pd.read_csv(r"C:\Users\Legion\Desktop\KSP DATATHON\datathon\functional_components\Predictive Crime Analytics\AccusedData.csv")
+accused_data = pd.read_csv(r"D:\KRK Datathon\datathon\Predictive Crime Analytics\AccusedData.csv")
 
 # Load Karnataka GeoJSON file for district coordinates
-with open(r"C:\Users\Legion\Desktop\KSP DATATHON\datathon\functional_components\images\karnataka.json", 'r') as f:
+with open(r"D:\KRK Datathon\datathon\functional_components\images\karnataka.json", 'r') as f:
     karnataka_geojson = json.load(f)
 
 # Extract district coordinates from GeoJSON file
