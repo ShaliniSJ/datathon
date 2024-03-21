@@ -12,9 +12,10 @@ def csv_to_parquet():
     for i in files:
     # Load CSV file into a pandas DataFrame
         df = pd.read_csv(i)
-
         # Convert DataFrame to Parquet format
         df.to_parquet(i.split('.')[0] + '.parquet', engine='pyarrow')
+
+csv_to_parquet()
 
 
 def get_victim_info(filter):
@@ -30,4 +31,4 @@ def get_victim_info(filter):
         response["65+"] = len(victim_info[(victim_info["age"] > 65)])
     return response
 
-get_victim_info("age")
+# get_victim_info("age")
