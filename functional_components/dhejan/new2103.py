@@ -15,8 +15,8 @@ with open(r"../images/karnataka.json", 'r') as f:
     karnataka_geojson = json.load(f)
 
 # Load district units from JSON file
-with open(r"../images/district_units.json", 'r') as f:
-    district_units_data = json.load(f)
+with open(r"../images/structured_police_stations.json", 'r') as f:
+    unit_coordinates_data = json.load(f)
 
 # Extract district coordinates from GeoJSON file
 karnataka_districts = {}
@@ -72,6 +72,11 @@ def create_heatmap(selected_age, selected_sex, selected_year, selected_month, se
     grouped_data["longitude"] = grouped_data["District_Name"].map(lambda x: karnataka_districts.get(x, (None, None))[1])
 
     return grouped_data
+
+# Function to get unit coordinates based on selected district
+def get_unit_coordinates(selected_district):
+    unit_coordinates = unit_coordinates_data.get(selected_district, [])
+    return unit_coordinates
 
 # Display the app
 st.set_page_config(page_title="KSP Crime Analytics", page_icon="🌍")
@@ -132,41 +137,73 @@ with st.expander("District View", expanded=st.session_state.tab_name == "Distric
     st.session_state.tab_name = "District View"
     st.header("District View")
 
-    # Function to get unit names based on selected district
-    def get_unit_names(selected_district):
-        unit_names_data = district_units_data.get(selected_district, [])
-        if isinstance(unit_names_data, list):
-            return unit_names_data
-        else:
-            return []  # Return an empty list or handle the case based on your application's logic
-
-    # Sidebar UI for filter selection
     selected_district = st.selectbox("Select District", sorted(karnataka_districts.keys()), key="district_select")
-    selected_unit = st.selectbox("Select Unit Name", get_unit_names(selected_district), key="unit_select")
     selected_age_district = st.slider("Select Age Limit (district)", 0, 120, (0, 120), key="age_slider_district")
     selected_sex_district = []
     if st.checkbox("Male (district)", True, key="male_checkbox_district"):
         selected_sex_district.append("MALE")
     if st.checkbox("Female (district)", True, key="female_checkbox_district"):
         selected_sex_district.append("FEMALE")
-        selected_year_district = st.slider("Select Year (district)", 2016, 2024, 2016, key="year_slider_district")
-        selected_month_district = st.slider("Select Month (district)", 1, 12, 1, key="month_slider_district")
-        
-        # Zoom to the selected district on the map
-        district_coordinates = karnataka_districts.get(selected_district, None)
-        if district_coordinates:
-            latitude, longitude = district_coordinates
-            st.pydeck_chart(
-                pdk.Deck(
-                    map_style="mapbox://styles/mapbox/light-v9",
-                    initial_view_state={
-                        "latitude": latitude,
-                        "longitude": longitude,
-                        "zoom": 8,  # Adjust the zoom level as needed
-                        "pitch": 50,
-                    },
-                    layers=[district_layer],
-                )
+    selected_year_district = st.slider("Select Year (district)", 2016, 2024, 2016, key="year_slider_district")
+    selected_month_district = st.slider("Select Month (district)", 1, 12, 1, key="month_slider_district")
+
+    # Function to create a heatmap for units within the selected district
+    def create_unit_heatmap(selected_district, selected_age, selected_sex, selected_year, selected_month):
+        units = get_unit_coordinates(selected_district)
+        filtered_data = accused_data[
+            (accused_data["District_Name"] == selected_district) &
+            (accused_data["age"].between(selected_age[0], selected_age[1])) &
+            (accused_data["Sex"].isin(selected_sex)) &
+            (accused_data["Year"] == selected_year) &
+            (accused_data["Month"] == selected_month)
+        ]
+
+        # Map each unit to its corresponding coordinate in the JSON file
+        unit_locations = {
+            unit: coordinates[0].split(', ') for unit, coordinates in units.items()
+        }
+
+        # Group the filtered data by UnitName
+        grouped_data = filtered_data.groupby("UnitName").size().reset_index(name="AccusedCount")
+        grouped_data["latitude"] = grouped_data["UnitName"].apply(lambda unit: float(unit_locations[unit][0]))
+        grouped_data["longitude"] = grouped_data["UnitName"].apply(lambda unit: float(unit_locations[unit][1]))
+
+        return grouped_data
+
+    heatmap_data = create_unit_heatmap(selected_district, selected_age_district, selected_sex_district, selected_year_district, selected_month_district)
+    
+    # Zoom to the selected district on the map and display the heatmap
+    district_coordinates = karnataka_districts.get(selected_district, None)
+    if district_coordinates and not heatmap_data.empty:
+        latitude, longitude = district_coordinates
+        st.pydeck_chart(
+            pdk.Deck(
+                map_style="mapbox://styles/mapbox/light-v9",
+                initial_view_state={
+                    "latitude": latitude,
+                    "longitude": longitude,
+                    "zoom": 7,  # Adjust the zoom level as needed
+                    "pitch": 50,
+                },
+                layers=[
+                    pdk.Layer(
+                        "HeatmapLayer",
+                        data=heatmap_data,
+                        get_position=["longitude", "latitude"],
+                        aggregation='"MEAN"',
+                        get_weight="AccusedCount",
+                        radius=100,
+                        color_range=[
+                            [255, 0, 0, 255],
+                            [255, 165, 0, 255],
+                            [255, 255, 0, 255],
+                            [0, 128, 0, 255],
+                            [0, 0, 255, 255],
+                        ],
+                    ),
+                    district_layer,
+                ],
             )
-        else:
-            st.warning("Coordinates not found for the selected district.")
+        )
+    else:
+        st.warning("No data available for the selected filters or district.")
