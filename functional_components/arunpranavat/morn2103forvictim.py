@@ -30,12 +30,13 @@ for feature in karnataka_geojson['features']:
 accused_data_filtered = accused_data[["District_Name", "Year", "age", "Caste", "Profession", "Sex", "Month"]]
 
 # Function to create a visualization based on selected filters
-def create_heatmap(selected_age, selected_sex, selected_month, selected_layers):
+def create_heatmap(selected_age, selected_sex, selected_month, selected_year, selected_layers):
     # Apply filters
     filtered_data = accused_data_filtered[
         (accused_data_filtered["age"].between(selected_age[0], selected_age[1])) &
         (accused_data_filtered["Sex"].isin(selected_sex)) &
-        (accused_data_filtered["Month"] == selected_month)
+        (accused_data_filtered["Month"] == selected_month) &
+        (accused_data_filtered["Year"] == selected_year)
     ]
 
     # Group data for visualization
@@ -114,6 +115,7 @@ if st.sidebar.checkbox("Male", True, key="sidebar_male_checkbox"):
 if st.sidebar.checkbox("Female", True, key="sidebar_female_checkbox"):
     selected_sex.append("FEMALE")
 selected_month = st.sidebar.slider("Select Month", 1, 12, 1, key="sidebar_month_slider")
+selected_year = st.sidebar.slider("Select Month", 2016, 2024, 1, key="sidebar_month_slider")
 
 # Call create_heatmap with user selected inputs
-create_heatmap(selected_age, selected_sex, selected_month, [])
+create_heatmap(selected_age, selected_sex, selected_month, selected_year, [])
