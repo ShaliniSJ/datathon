@@ -1,33 +1,127 @@
+import streamlit as st
 import pandas as pd
-accused_data = pd.read_parquet("Predictive Crime Analytics/AccusedData.parquet")
-complainant_details = pd.read_parquet(
-    "Predictive Crime Analytics/ComplainantDetailsData.parquet"
-)
-victim_info = pd.read_parquet("Predictive Crime Analytics/VictimInfoDetails.parquet")
-fir_details = pd.read_csv("Predictive Crime Analytics/FIR_Details_Data.csv")
 
-def csv_to_parquet():
+import pydeck as pdk
 
-    files = ['Predictive Crime Analytics/AccusedData.csv', 'Predictive Crime Analytics/ComplainantDetailsData.csv', 'Predictive Crime Analytics/VictimInfoDetails.csv', 'Predictive Crime Analytics/FIR_Details_Data.csv']
-    for i in files:
-    # Load CSV file into a pandas DataFrame
-        df = pd.read_csv(i)
+# Load victim data from Parquet file
+mapped_data = pd.read_csv("../../Predictive Crime Analytics/FIR_Details_Data.csv")
+print(mapped_data.columns)
 
-        # Convert DataFrame to Parquet format
-        df.to_parquet(i.split('.')[0] + '.parquet', engine='pyarrow')
+# Coordinates of Karnataka districts
+karnataka_districts = {
+    "Bagalkot": (16.1852, 75.6966),
+    "Ballari": (15.1394, 76.9214),
+    "Belagavi City": (15.8497, 74.4977),
+    "Belagavi Dist": (15.8497, 74.4977),
+    "Bengaluru City": (12.9716, 77.5946),
+    "Bengaluru Dist": (12.9716, 77.5946),
+    "Bidar": (17.9137, 77.5175),
+    "Chamarajanagar": (11.9261, 76.9432),
+    "Chickballapura": (13.4352, 77.7338),
+    "Chikkamagaluru": (13.3153, 75.7754),
+    "Chitradurga": (14.23, 76.3985),
+    "CID": (12.9716, 77.5946),
+    "Coastal Security Police": (12.9716, 77.5946),
+    "Dakshina Kannada": (12.8654, 74.8426),
+    "Davanagere": (14.4664, 75.9238),
+    "Dharwad": (15.3647, 75.1239),
+    "Gadag": (15.4296, 75.6299),
+    "Hassan": (13.0072, 76.096),
+    "Haveri": (14.7959, 75.3952),
+    "Hubballi Dharwad City": (15.3647, 75.1239),
+    "ISD Bengaluru": (12.9716, 77.5946),
+    "K.G.F": (12.9716, 77.5946),
+    "Kalaburagi": (17.3297, 76.8343),
+    "Kalaburagi City": (17.3297, 76.8343),
+    "Karnataka Railways": (12.9716, 77.5946),
+    "Kodagu": (12.3375, 75.8069),
+    "Kolar": (13.1364, 78.1299),
+    "Koppal": (15.3506, 76.1546),
+    "Mandya": (12.5223, 76.8974),
+    "Mangaluru City": (12.9141, 74.856),
+    "Mysuru City": (12.2958, 76.6394),
+    "Mysuru Dist": (12.2958, 76.6394),
+    "Raichur": (16.2, 77.355),
+    "Ramanagara": (12.7159, 77.2813),
+    "Shivamogga": (13.9299, 75.5681),
+    "Tumakuru": (13.3422, 77.1016),
+    "Udupi": (13.3409, 74.7421),
+    "Uttara Kannada": (14.9656, 74.4101),
+    "Vijayanagara": (15.335, 76.4626),
+    "Vijayapur": (16.8302, 75.7109),
+    "Yadgir": (16.7704, 77.1305)
+}
+
+# Filter relevant columns
+victim_data = mapped_data[["District_Name", "Year", "FIR Type", "Complaint_Mode", "UnitName"]]
+
+# Group data for graphs
+district_year_age = victim_data.groupby(["District_Name", "Year"]).size().reset_index(name="VictimCount")
+district_compilent_mode = victim_data.groupby(["District_Name", "InjuryType", "Year"]).size().reset_index(name="VictimCount")
+district_unit_count = victim_data.groupby(["District_Name", "UnitName"]).size().reset_index(name="VictimCount")
+district_profession_count = victim_data.groupby(["District_Name", "Profession"]).size().reset_index(name="VictimCount")
+
+# Add latitude and longitude columns to each DataFrame using the karnataka_districts dictionary
+district_year_age["latitude"] = district_year_age["District_Name"].map(lambda x: karnataka_districts.get(x, (None, None))[0])
+district_year_age["longitude"] = district_year_age["District_Name"].map(lambda x: karnataka_districts.get(x, (None, None))[1])
+district_compilent_mode["latitude"] = district_compilent_mode["District_Name"].map(lambda x: karnataka_districts.get(x, (None, None))[0])
+district_compilent_mode["longitude"] = district_compilent_mode["District_Name"].map(lambda x: karnataka_districts.get(x, (None, None))[1])
+
+district_unit_count["latitude"] = district_unit_count["District_Name"].map(lambda x: karnataka_districts.get(x, (None, None))[0])
+district_unit_count["longitude"] = district_unit_count["District_Name"].map(lambda x: karnataka_districts.get(x, (None, None))[1])
+
+district_profession_count["latitude"] = district_profession_count["District_Name"].map(lambda x: karnataka_districts.get(x, (None, None))[0])
+district_profession_count["longitude"] = district_profession_count["District_Name"].map(lambda x: karnataka_districts.get(x, (None, None))[1])
+
+def mapping_demo(layers):
+    st.pydeck_chart(
+        pdk.Deck(
+            map_style="mapbox://styles/mapbox/light-v9",
+            initial_view_state={"latitude": 14.5204, "longitude": 75.7224, "zoom": 7, "pitch": 50},
+            layers=layers,
+        )
+    )
 
 
-def get_victim_info(filter):
-    response = {}
-    if filter == "age":
-        # Get the number of victims in each age group = ["19-25","26-35","36-45","46-55","56-65","65+"]
-        response["10-18"] = len(victim_info[(victim_info["age"] >= 10) & (victim_info["age"] <= 18)])
-        response["19-25"] = len(victim_info[(victim_info["age"] >= 19) & (victim_info["age"] <= 25)])
-        response["26-35"] = len(victim_info[(victim_info["age"] >= 26) & (victim_info["age"] <= 35)])
-        response["36-45"] = len(victim_info[(victim_info["age"] >= 36) & (victim_info["age"] <= 45)])
-        response["46-55"] = len(victim_info[(victim_info["age"] >= 46) & (victim_info["age"] <= 55)])
-        response["56-65"] = len(victim_info[(victim_info["age"] >= 56) & (victim_info["age"] <= 65)])
-        response["65+"] = len(victim_info[(victim_info["age"] > 65)])
-    return response
+# Define pydeck layers for different graphs
+ALL_LAYERS = {
+    "FIR count district wise and year wise": pdk.Layer(
+        "ScatterplotLayer",
+        data=district_year,
+        get_position=["longitude", "latitude"],
+        get_color="[VictimCount, 0, 255, 255]",
+        get_radius=10000,
+    ),
 
-get_victim_info("age")
+    "Complaint type count in FIR details district wise": pdk.Layer(
+
+        "ScatterplotLayer",
+        data=district_compilent_mode,
+        get_position=["longitude", "latitude"],
+        get_color="[VictimCount, 255, 0, 255]",
+        get_radius=10000,
+    ),
+
+    "Heinous and Non Heinous Classification FIR count unit wise, district wise, year wise": pdk.Layer(
+        "ScatterplotLayer",
+        data=district_unit_count,
+        get_position=["longitude", "latitude"],
+        get_color="[VictimCount, 255, 255, 0]",
+        get_radius=10000,
+    ),
+
+}
+
+
+# Define the main function
+
+def main():
+    st.set_page_config(page_title="KSP Crime Analytics", page_icon="🌍")
+    st.markdown("# Mapping Demo")
+    st.sidebar.header("Mapping Demo")
+    selected_layer = st.sidebar.radio("Select Layer", list(ALL_LAYERS.keys()))
+    # Show selected layer
+    mapping_demo([ALL_LAYERS[selected_layer]])
+
+if __name__ == "__main__":
+    main()
