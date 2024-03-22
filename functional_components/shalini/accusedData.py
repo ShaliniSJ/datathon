@@ -96,9 +96,9 @@ st.set_page_config(page_title="KSP Crime Analytics", page_icon="🌍")
 st.title("KSP Crime Analytics")
 
 # Use expander for tabs
-with st.expander("State View", expanded=st.session_state.tab_name == "State View"):
+with st.expander("City View", expanded=st.session_state.tab_name == "State View"):
     st.session_state.tab_name = "State View"
-    st.header("State View")
+    st.header("City View")
 
     # Sidebar UI for filter selection
     selected_age_state = st.slider(
