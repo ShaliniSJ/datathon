@@ -4,6 +4,9 @@ import pydeck as pdk
 import json
 import datetime
 
+if 'tab_name' not in st.session_state:
+    st.session_state.tab_name = ""
+
 # Load accused data from Parquet file
 accused_data = pd.read_csv(r"../../Predictive Crime Analytics/AccusedData.csv")
 
