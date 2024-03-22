@@ -96,7 +96,7 @@ st.set_page_config(page_title="KSP Crime Analytics", page_icon="🌍")
 st.title("KSP Crime Analytics")
 
 # Use expander for tabs
-with st.expander("Dsitrict View", expanded=st.session_state.tab_name == "State View"):
+with st.expander("District View", expanded=st.session_state.tab_name == "State View"):
     st.session_state.tab_name = "State View"
     st.header("District View")
 
