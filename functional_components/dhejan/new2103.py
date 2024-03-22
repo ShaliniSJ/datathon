@@ -185,7 +185,7 @@ with st.expander("District View", expanded=st.session_state.tab_name == "Distric
     with col_to_date:
         # Ensure 'To Date' is at least the same or after 'From Date'
         to_date_min = max(from_date, min_date)
-        to_date = st.date_input("To Date", value=max(from_date, to_date_min), min_value=to_date_min, max_value=max_date, key="to_date")
+        to_date = st.date_input("To Date", value=max_date, min_value=to_date_min, max_value=max_date, key="to_date")
 
     selected_from_year = from_date.year
     selected_from_month = from_date.month
@@ -245,10 +245,23 @@ with st.expander("District View", expanded=st.session_state.tab_name == "Distric
             grouped_data["latitude"] = grouped_data["UnitName"].apply(lambda unit: float(unit_locations[unit][0]))
             grouped_data["longitude"] = grouped_data["UnitName"].apply(lambda unit: float(unit_locations[unit][1]))
 
-            return grouped_data
+            text_data = grouped_data.copy()
+            text_data['text'] = text_data['UnitName']
+            
+            return grouped_data, text_data
 
-        heatmap_data = create_unit_heatmap(selected_district, selected_profession, selected_age_district, selected_sex_district, selected_from_year, selected_to_year, selected_from_month, selected_to_month)    
+        heatmap_data, text_data = create_unit_heatmap(selected_district, selected_profession, selected_age_district, selected_sex_district, selected_from_year, selected_to_year, selected_from_month, selected_to_month)    
         
+        text_layer = pdk.Layer(
+            "TextLayer",
+            data=text_data,
+            get_position=["longitude", "latitude"],
+            get_text="text",
+            get_color=[0, 0, 0, 200],
+            get_size=16,
+            get_alignment_baseline="'bottom'"
+        )
+
         # Display the heatmap and the table of unit names
         district_coordinates = karnataka_districts.get(selected_district, None)
         if district_coordinates and not heatmap_data.empty:
@@ -279,6 +292,7 @@ with st.expander("District View", expanded=st.session_state.tab_name == "Distric
                             ],
                         ),
                         district_layer,
+                        text_layer,
                     ],
                 )
             )
