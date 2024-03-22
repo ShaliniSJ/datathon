@@ -96,9 +96,9 @@ st.set_page_config(page_title="KSP Crime Analytics", page_icon="🌍")
 st.title("KSP Crime Analytics")
 
 # Use expander for tabs
-with st.expander("City View", expanded=st.session_state.tab_name == "State View"):
+with st.expander("District View", expanded=st.session_state.tab_name == "State View"):
     st.session_state.tab_name = "State View"
-    st.header("City View")
+    st.header("District View")
 
     # Sidebar UI for filter selection
     selected_age_state = st.slider(
@@ -195,10 +195,10 @@ with st.expander("City View", expanded=st.session_state.tab_name == "State View"
             st.warning("No data available for the selected filters in State View.")
 
 with st.expander(
-    "District View", expanded=st.session_state.tab_name == "District View"
+    "City View", expanded=st.session_state.tab_name == "District View"
 ):
     st.session_state.tab_name = "District View"
-    st.header("District View")
+    st.header("City View")
 
     selected_district = st.selectbox(
         "Select District", sorted(karnataka_districts.keys()), key="district_select"
@@ -242,7 +242,7 @@ with st.expander(
         to_date_min = max(from_date, min_date)
         to_date = st.date_input(
             "To Date",
-            value=max(from_date, to_date_min),
+            value=max_date,
             min_value=to_date_min,
             max_value=max_date,
             key="to_date",
@@ -335,9 +335,12 @@ with st.expander(
                 lambda unit: float(unit_locations[unit][1])
             )
 
-            return grouped_data
+            text_data = grouped_data.copy()
+            text_data['text'] = text_data['UnitName']
 
-        heatmap_data = create_unit_heatmap(
+            return grouped_data, text_data
+
+        heatmap_data, text_data = create_unit_heatmap(
             selected_district,
             selected_profession,
             selected_age_district,
@@ -346,6 +349,16 @@ with st.expander(
             selected_to_year,
             selected_from_month,
             selected_to_month,
+        )
+
+        text_layer = pdk.Layer(
+            "TextLayer",
+            data=text_data,
+            get_position=["longitude", "latitude"],
+            get_text="text",
+            get_color=[0, 0, 0, 200],
+            get_size=16,
+            get_alignment_baseline="'bottom'"
         )
 
         # Display the heatmap and the table of unit names
@@ -379,6 +392,7 @@ with st.expander(
                                 ],
                             ),
                             district_layer,
+                            text_layer,
                         ],
                     )
                 )
