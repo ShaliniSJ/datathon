@@ -32,7 +32,7 @@ unit_data = load_unit_data(json_path)
 df_fir = df_fir.drop(columns=['io assigned', 'conviction head count'], errors='ignore')
 
 # Streamlit layout setup
-st.title('FIR Data Visualization Tool')
+st.title('Crime Data Visualization Tool')
 st.sidebar.title('Filters')
 st.sidebar.markdown('## Filter FIR Data')
 

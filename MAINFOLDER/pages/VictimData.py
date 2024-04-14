@@ -93,8 +93,8 @@ def get_unit_coordinates(selected_district):
 
 
 # Display the app
-st.set_page_config(page_title="KSP Crime Analytics", page_icon="🌍")
-st.title("KSP Crime Analytics")
+st.set_page_config(page_title="Victim Data Analytics", page_icon="🌍")
+st.title("Victim Data Analytics")
 
 # Use expander for tabs
 with st.expander("State View", expanded=st.session_state.tab_name == "State View"):

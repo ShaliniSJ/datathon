@@ -43,9 +43,9 @@ def predict_crime(input_month,selected_date):
         
         # use the prediction to update the batch and remove the first value
         current_batch = np.append(current_batch[:,1:,:],[[current_pred]],axis=1)
-    print("asdfasdfs",selected_date)
+    
     future_dates = pd.date_range(start=dfkarnataka.index[-1], end=selected_date+relativedelta(months=1), freq='ME')[3:]
-    print(future_dates)
+    
     true_predictions = scaler.inverse_transform(test_predictions)
     # Create a range of future dates for plotting
     true_predictions_map = dict()
