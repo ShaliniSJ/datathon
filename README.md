@@ -3,7 +3,7 @@
 
 Introducing the Predictive Crime Analysis and Visualization System for Karnataka State, a cutting-edge initiative aimed at revolutionizing crime prevention. By harnessing advanced data analytics and visualization techniques, our project offers deep insights into historical crime trends and forecasts future occurrences. Through comprehensive integration of crime, victim, and accused data, we empower law enforcement agencies with actionable intelligence to enhance public safety and proactive measures. Join us in ushering a new era of data-driven decision-making for a safer Karnataka.
 
-## Colaborators
+## Collaborators
 
 - [@Arun Pranav A T](https://github.com/arunpranav-at)
 - [@Shalini S](https://github.com/ShaliniSJ)
