@@ -9,7 +9,7 @@ if "tab_name" not in st.session_state:
     st.session_state.tab_name = ""
 
 # Load accused data from Parquet file
-accused_data = pd.read_csv(r"../../Predictive Crime Analytics/AccusedData.csv")
+accused_data = pd.read_csv(r"../../Predictive Crime Analytics/VictimInfoDetails.csv")
 
 # Load Karnataka GeoJSON file for district coordinates
 with open(r"../images/karnataka.json", "r") as f:
@@ -36,7 +36,7 @@ for feature in karnataka_geojson["features"]:
         karnataka_districts[district_name] = (latitude, longitude)
 
 # Filter relevant columns from accused data
-accused_data_filtered = accused_data[
+victim_filtered_data = accused_data[
     ["District_Name", "UnitName", "Year", "age", "Caste", "Profession", "Sex", "Month"]
 ]
 
@@ -54,6 +54,7 @@ district_layer = pdk.Layer(
     get_text_anchor="middle",
 )
 
+
 # Function to create a visualization based on selected filters
 def create_heatmap(
     selected_age, selected_sex, selected_year, selected_month, selected_district=None
@@ -62,11 +63,11 @@ def create_heatmap(
     selected_year_list = [selected_year]
 
     # Apply filters
-    filtered_data = accused_data_filtered[
-        (accused_data_filtered["age"].between(selected_age[0], selected_age[1]))
-        & (accused_data_filtered["Sex"].isin(selected_sex))
-        & (accused_data_filtered["Year"].isin(selected_year_list))
-        & (accused_data_filtered["Month"] == selected_month)
+    filtered_data = victim_filtered_data[
+        (victim_filtered_data["age"].between(selected_age[0], selected_age[1]))
+        & (victim_filtered_data["Sex"].isin(selected_sex))
+        & (victim_filtered_data["Year"].isin(selected_year_list))
+        & (victim_filtered_data["Month"] == selected_month)
     ]
 
     # Group data for visualization
@@ -96,9 +97,9 @@ st.set_page_config(page_title="KSP Crime Analytics", page_icon="🌍")
 st.title("KSP Crime Analytics")
 
 # Use expander for tabs
-with st.expander("District View", expanded=st.session_state.tab_name == "State View"):
+with st.expander("State View", expanded=st.session_state.tab_name == "State View"):
     st.session_state.tab_name = "State View"
-    st.header("District View")
+    st.header("State View")
 
     # Sidebar UI for filter selection
     selected_age_state = st.slider(
@@ -152,7 +153,7 @@ with st.expander("District View", expanded=st.session_state.tab_name == "State V
             selected_from_month_state,
             [],
         )
-        col_for_map,col_for_legend = st.columns((5,1))
+        col_for_map, col_for_legend = st.columns((5, 1))
 
         if not heatmap_data_state.empty:
             with col_for_map:
@@ -187,18 +188,18 @@ with st.expander("District View", expanded=st.session_state.tab_name == "State V
                     )
                 )
             with col_for_legend:
-                with Image.open("../images/legend.png") as legend:
-                    new_legend = legend.resize((1000,5000))
+                with Image.open("../images/untitled.png") as legend:
+                    new_legend = legend.resize((1000, 5000))
                     st.image(new_legend, use_column_width=True)
-            
+
         else:
             st.warning("No data available for the selected filters in State View.")
 
 with st.expander(
-    "City View", expanded=st.session_state.tab_name == "District View"
+    "District View", expanded=st.session_state.tab_name == "District View"
 ):
     st.session_state.tab_name = "District View"
-    st.header("City View")
+    st.header("District View")
 
     selected_district = st.selectbox(
         "Select District", sorted(karnataka_districts.keys()), key="district_select"
@@ -242,7 +243,7 @@ with st.expander(
         to_date_min = max(from_date, min_date)
         to_date = st.date_input(
             "To Date",
-            value=max_date,
+            value=max(from_date, to_date_min),
             min_value=to_date_min,
             max_value=max_date,
             key="to_date",
@@ -254,7 +255,7 @@ with st.expander(
     selected_to_month = to_date.month
 
     submit_button = st.button("Generate Heatmap")
-    col_for_map,col_for_legend = st.columns((5,1))
+    col_for_map, col_for_legend = st.columns((5, 1))
     if submit_button:
 
         def table_data(
@@ -335,12 +336,9 @@ with st.expander(
                 lambda unit: float(unit_locations[unit][1])
             )
 
-            text_data = grouped_data.copy()
-            text_data['text'] = text_data['UnitName']
+            return grouped_data
 
-            return grouped_data, text_data
-
-        heatmap_data, text_data = create_unit_heatmap(
+        heatmap_data = create_unit_heatmap(
             selected_district,
             selected_profession,
             selected_age_district,
@@ -349,16 +347,6 @@ with st.expander(
             selected_to_year,
             selected_from_month,
             selected_to_month,
-        )
-
-        text_layer = pdk.Layer(
-            "TextLayer",
-            data=text_data,
-            get_position=["longitude", "latitude"],
-            get_text="text",
-            get_color=[0, 0, 0, 200],
-            get_size=16,
-            get_alignment_baseline="'bottom'"
         )
 
         # Display the heatmap and the table of unit names
@@ -392,7 +380,6 @@ with st.expander(
                                 ],
                             ),
                             district_layer,
-                            text_layer,
                         ],
                     )
                 )
@@ -412,8 +399,8 @@ with st.expander(
             )
             # Now use this data_frame to display in the table
             with col_for_legend:
-                with Image.open("../images/legend.png") as legend:
-                    new_legend = legend.resize((1000,5000))
+                with Image.open("../images/untitled.png") as legend:
+                    new_legend = legend.resize((1000, 5000))
                     st.image(new_legend, use_column_width=True)
                 # st.image(new_legend, use_column_width=True)
 
