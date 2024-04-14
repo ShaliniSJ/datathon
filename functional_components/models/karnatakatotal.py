@@ -13,8 +13,8 @@ import matplotlib.pyplot as plt
 scaler = MinMaxScaler()
 
 # Load the saved model
-model = load_model('karnatakatotal.keras')
-dfkarnataka = pd.read_csv("karnataka_total_count.csv",index_col='year_month',parse_dates=True)
+model = load_model(r'D:\KRK Datathon\datathon\functional_components\originalmodels\karnatakatotal.keras')
+dfkarnataka = pd.read_csv(r"D:\KRK Datathon\datathon\functional_components\originalcsvs\karnataka_total_count.csv",index_col='year_month',parse_dates=True)
 dfkarnataka.index.freq='MS'
 
 scaler.fit(dfkarnataka)
