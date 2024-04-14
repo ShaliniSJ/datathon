@@ -1,50 +1,52 @@
 import streamlit as st
+from datetime import datetime
+from dateutil.relativedelta import relativedelta
 
-# Function to get unit names based on selected district
-def get_unit_names(district):
-    # Dummy data, replace this with actual data source
-    units = {
-        "balagot": ["amengad ps", "unit2", "unit3"],
-        "ballari": ["unit1", "unit2", "unit3"],
-        # Add more districts and unit names as needed
-    }
-    return units.get(district, [])
+# Sidebar for inputs
+st.sidebar.title('Input Parameters')
 
-def main():
-    st.title("Future Crime Prediction")
+# Select Type (State, District, Unit)
+state = st.sidebar.selectbox('State', ['Karnataka'], key='select_state')
 
-    # Get inputs from user
+# Mapping districts to specific units
+district_unit_map = {
+    'Bagalkot': ['Unit1', 'Unit2'],
+    'Ballari': ['Unit3', 'Unit4'],
+    'Belagavi City': ['Unit5', 'Unit6'],
+    # Add more mappings here for each district
+}
 
-    type_input = st.selectbox("Select Type", ["State", "District", "Unit"])
+# List of all districts
+districts = list(district_unit_map.keys())
+selected_district = st.sidebar.selectbox("District", districts, key='select_district')
 
-    if type_input == "State":
-        # Only one option for Karnataka
-        state = "Karnataka"
-        st.write(f"Selected State: {state}")
+# Update units based on selected district
+units = district_unit_map.get(selected_district, [])
+selected_unit = st.sidebar.selectbox("Unit", units, key='select_unit')
 
-    elif type_input == "District":
-        # All districts and select district
-        districts = ["All", "Balagot", "Ballari", "Other 31 Districts"]
-        selected_district = st.selectbox("Select District", districts)
+# Future Date Input
+today = datetime.today()
+min_date = today + relativedelta(days=1)  # Ensure only future dates can be selected
+selected_date = st.sidebar.date_input("Select Future Date", value=min_date, min_value=min_date, key='select_future_date')
 
-        if selected_district != "All":
-            st.write(f"Selected District: {selected_district}")
+# Calculate the number of months from the current month
+if selected_date:
+    months_diff = (selected_date.year - today.year) * 12 + selected_date.month - today.month
 
-    else:  # Unit
-        selected_district = st.selectbox("Select District", ["Balagot", "Ballari", "Other 31 Districts"])
-        unit_names = get_unit_names(selected_district)
-        selected_unit = st.selectbox("Select Unit", unit_names)
+# Type of Crime Input
+crime_types = ['ALL', 'POCSO', 'KARNATAKA POLICE ACT 1963', ...]  # Complete with your list of crime types
+selected_crime = st.sidebar.selectbox("Type of Crime", crime_types, key='select_crime_type')
 
-        st.write(f"Selected Unit: {selected_unit}")
+# Main page to display inputs confirmation
+st.title("MODEL PREDICTION")
+st.write("Selected District:", selected_district)
+st.write("Selected Unit:", selected_unit)
+if selected_date:
+    st.write("Selected Future Date:", selected_date)
+    st.write("Months from current month:", months_diff)
+st.write("Selected Type of Crime:", selected_crime)
 
-    date_range = st.date_input("Select Date Range")
-
-    crime_types = ["All", "Theft", "Kidnap", "Other 107 types of crime"]
-    selected_crime_type = st.selectbox("Select Type of Crime", crime_types)
-
-    st.write("Date Range:", date_range)
-    st.write("Type of Crime:", selected_crime_type)
-
-
-if __name__ == "__main__":
-    main()
+# Button to trigger prediction
+if st.button("Run Prediction"):
+    # Here you will call your model prediction function
+    st.write("Prediction process would be here.")
