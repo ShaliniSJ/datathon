@@ -24,7 +24,6 @@ def load_unit_data(json_path):
     with open(json_path, 'r') as file:
         data = json.load(file)
     return data
-
 # Load data
 file_path = "../../Predictive Crime Analytics/FIR_Details_Data.csv"
 json_path = "../images/district_units.json"

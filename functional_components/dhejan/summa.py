@@ -5,7 +5,7 @@ file_path = r"C:\\Users\\Legion\\Desktop\\KSP DATATHON\\datathon\\Predictive Cri
 df = pd.read_csv(file_path)
 
 # Assuming the column containing crime types is named 'Crime_Type', you can filter it like this
-crime_column = df['CrimeGroup_Name']
+crime_column = df['UnitName']
 
 # Print unique crime types
 unique_crimes = crime_column.unique()
