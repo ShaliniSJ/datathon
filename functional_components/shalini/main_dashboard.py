@@ -28,7 +28,7 @@ def set_bg_hack(main_bg):
 set_bg_hack('../images/ksp_logo.png')
 # Define the button labels, URLs, and tooltips
 button_labels = ["Accused Data Visualisation", "Victim Data Visualisation", "Crime Data Visualisation", "Future Crime Prediction"]
-button_urls = ["pages/accusedData.py", "pages/victimData.py", "pages/crimedata.py", "pages/Shalini.py"]  # Replace with actual URLs if needed
+button_urls = ["pages/accusedData.py", "pages/victimData.py", "pages/crimedata.py", "pages/model_dashboard.py"]  # Replace with actual URLs if needed
 button_tooltips = [
     "Explore suspect profiles, associations, and patterns for informed investigations.",
     "Understand victim demographics, vulnerabilities, and impact for victim-centered responses.",
