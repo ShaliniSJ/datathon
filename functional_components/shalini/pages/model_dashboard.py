@@ -14,13 +14,19 @@ from sklearn.preprocessing import MinMaxScaler
 from tensorflow.keras.preprocessing.sequence import TimeseriesGenerator
 import matplotlib.pyplot as plt
 
-def predict_crime(input_month,selected_date):
+def predict_crime(selected_district,selected_crime,selected_unit,input_month,selected_date):
     scaler = MinMaxScaler()
 
+        
     # Load the saved model
     # model = load_model('../../originalmodels/karnatakatotal.keras')
     model = load_model('..\originalmodels\karnatakatotal.keras')
     dfkarnataka = pd.read_csv('../originalcsvs/karnataka_total_count.csv',index_col='year_month',parse_dates=True)
+    
+    if selected_crime == "MOTOR VEHICLE ACCIDENTS NON FATAL" and selected_district == "Bagalkot" and selected_unit=="Amengad PS":
+        model = load_model('..\originalmodels\amengadpsmotornonfatal.keras')
+        dfkarnataka = pd.read_csv('../originalcsvs/amengadpsmotornonfatal_count.csv',index_col='year_month',parse_dates=True)
+    
     dfkarnataka.index.freq='MS'
 
     scaler.fit(dfkarnataka)
@@ -43,7 +49,6 @@ def predict_crime(input_month,selected_date):
         
         # use the prediction to update the batch and remove the first value
         current_batch = np.append(current_batch[:,1:,:],[[current_pred]],axis=1)
-    print("asdfasdfs",selected_date)
     future_dates = pd.date_range(start=dfkarnataka.index[-1], end=selected_date+relativedelta(months=1), freq='ME')[3:]
     print(future_dates)
     true_predictions = scaler.inverse_transform(test_predictions)
@@ -123,5 +128,5 @@ st.write("Selected Type of Crime:", selected_crime)
 # Button to trigger prediction
 if st.button("Run Prediction"):
     # Here you will call your model prediction function
-    true_mp = predict_crime(months_diff,selected_date)
+    true_mp = predict_crime(selected_district,selected_crime,selected_crime,months_diff,selected_date)
     st.table(true_mp)
