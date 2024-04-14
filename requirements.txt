@@ -5,3 +5,10 @@ plotly
 matplotlib
 seaborn
 geopy
+imbalanced-learn
+scikit-learn
+tensorflow
+keras
+pytorch
+statsmodels
+Keras-Preprocessing
