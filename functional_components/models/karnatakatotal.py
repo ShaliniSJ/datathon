@@ -40,10 +40,13 @@ for i in range(input_month):
     # use the prediction to update the batch and remove the first value
     current_batch = np.append(current_batch[:,1:,:],[[current_pred]],axis=1)
     
-
+future_dates = pd.date_range(start=dfkarnataka.index[-2], periods=input_month+1, freq='ME')[1:]
+    
+for i,j in zip(future_dates, test_predictions):
+    print(i, j)
+    
 true_predictions = scaler.inverse_transform(test_predictions)
 # Create a range of future dates for plotting
-future_dates = pd.date_range(start=dfkarnataka.index[-2], periods=input_month+1, freq='ME')[1:]
 
 # Plotting
 plt.figure(figsize=(12, 6))
