@@ -80,7 +80,7 @@ streamlit run .\MainDashboard.py
 By leveraging advanced data analytics and visualization capabilities, the Predictive Crime Analysis and Visualization System for Karnataka State aims to revolutionize the way crime is understood, predicted, and addressed, ultimately contributing to a safer and more secure society.
 
 ## Explanation video available on YouTube
-The whole explanation video is available on YouTube [Click here to watch the youtube link](https://youtu.be/aKzof3DJHA0)<br><br>
+The whole explanation video is available on YouTube [Click here to watch the youtube video](https://youtu.be/aKzof3DJHA0)<br><br>
 
 ![alt text](<MAINFOLDER/ppt in images/Team Enigmatic Energizers_page-0010.jpg>)
 
