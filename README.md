@@ -84,4 +84,30 @@ The whole explanation video is available on YouTube [Click here to watch the you
 
 ![alt text](<MAINFOLDER/ppt in images/Team Enigmatic Energizers_page-0010.jpg>)
 
+# Screenshots of our application:
+![alt text](MAINFOLDER/images/ss_from_project/file_2024-04-14_17.37.56.png) 
+![alt text](MAINFOLDER/images/ss_from_project/file_2024-04-14_17.38.51.png) 
+![alt text](MAINFOLDER/images/ss_from_project/file_2024-04-14_17.42.11.png) 
+![alt text](MAINFOLDER/images/ss_from_project/file_2024-04-14_17.42.32.png) 
+![alt text](MAINFOLDER/images/ss_from_project/file_2024-04-14_17.42.55.png) 
+![alt text](MAINFOLDER/images/ss_from_project/file_2024-04-14_18.03.03.png) 
+![alt text](<MAINFOLDER/images/ss_from_project/Screenshot 2024-04-14 230846.png>) 
+![alt text](<MAINFOLDER/images/ss_from_project/Screenshot 2024-04-14 232855.png>) 
+![alt text](<MAINFOLDER/images/ss_from_project/Screenshot 2024-04-14 234126.png>) 
+![alt text](<MAINFOLDER/images/ss_from_project/Screenshot 2024-04-14 234135.png>) 
+![alt text](<MAINFOLDER/images/ss_from_project/Screenshot 2024-04-14 234201.png>) 
+![alt text](<MAINFOLDER/images/ss_from_project/Screenshot 2024-04-17 142052.jpg>) 
+![alt text](<MAINFOLDER/images/ss_from_project/Screenshot 2024-04-17 142142.jpg>) 
+![alt text](<MAINFOLDER/images/ss_from_project/Screenshot 2024-04-17 142421.jpg>) 
+![alt text](<MAINFOLDER/images/ss_from_project/Screenshot 2024-04-17 142434.jpg>) 
+![alt text](<MAINFOLDER/images/ss_from_project/Screenshot 2024-04-17 142526.jpg>) 
+![alt text](<MAINFOLDER/images/ss_from_project/Screenshot 2024-04-17 142613.jpg>) 
+![alt text](<MAINFOLDER/images/ss_from_project/Screenshot 2024-04-17 142708.jpg>) 
+![alt text](<MAINFOLDER/images/ss_from_project/Screenshot 2024-04-17 142717.jpg>) 
+![alt text](<MAINFOLDER/images/ss_from_project/Screenshot 2024-04-17 144342.png>) 
+![alt text](<MAINFOLDER/images/ss_from_project/Screenshot 2024-04-17 144401.png>) 
+![alt text](<MAINFOLDER/images/ss_from_project/Screenshot 2024-04-17 145211.png>) 
+![alt text](<MAINFOLDER/images/ss_from_project/Screenshot 2024-04-17 145230.png>)
+<br><br>
+
 ![alt text](<MAINFOLDER/ppt in images/Team Enigmatic Energizers_page-0011.jpg>)
