@@ -14,20 +14,21 @@ from sklearn.preprocessing import MinMaxScaler
 from tensorflow.keras.preprocessing.sequence import TimeseriesGenerator
 import matplotlib.pyplot as plt
 
-def predict_crime(selected_unit,selected_crime,selected_district,input_month,selected_date):
+def predict_crime(selected_unit, selected_crime, selected_district, input_month, selected_date):
     scaler = MinMaxScaler()
 
     # Load the saved model
-    # model = load_model('../../originalmodels/karnatakatotal.keras')
-    model = load_model(r'originalmodels\karnatakatotal.keras')
-    dfkarnataka = pd.read_csv('originalcsvs/karnataka_total_count.csv',index_col='year_month',parse_dates=True)
+    # model = load_model('../../originalmodels/karnatakatotal.keras')        
+    
+    if selected_crime == "ALL" and selected_district == "ALL" and selected_unit=="ALL":
+        model = load_model('originalmodels\karnatakatotal.keras')
+        dfkarnataka = pd.read_csv('originalcsvs\karnataka_total_count.csv',index_col='year_month',parse_dates=True)
+        
+    elif selected_crime == "MOTOR VEHICLE ACCIDENTS NON-FATAL" and selected_district == "Bagalkot" and selected_unit=="Amengad PS":
+        model = load_model('originalmodels\amengadpsmotornonfatal.keras')
+        dfkarnataka = pd.read_csv('originalcsvs\amengadpsmotornonfatal_count.csv',index_col='year_month',parse_dates=True)
+        
     dfkarnataka.index.freq='MS'
-
-    if selected_crime == "MOTOR VEHICLE ACCIDENTS NON-FATAL" and selected_district == "Bagalkot" and selected_unit=="Amengad PS":
-        print("came here")
-        model = load_model('originalmodels\\amengadpsmotornonfatal.keras')
-        dfkarnataka = pd.read_csv('originalcsvs/amengadpsmotornonfatal_count.csv',index_col='year_month',parse_dates=True)
-
     scaler.fit(dfkarnataka)
     scaled = scaler.transform(dfkarnataka)
     test_predictions = []
@@ -96,17 +97,17 @@ st.sidebar.title('Input Parameters')
 state = st.sidebar.radio('State', ['Karnataka'], key='select_state')
 
 # List of all districts
-districts = list(district_unit_map.keys())
+districts = ["ALL"] + list(district_unit_map.keys())
 selected_district = st.sidebar.selectbox("District", districts, key='select_district')
 
 # Update units based on selected district
-units = district_unit_map.get(selected_district, [])
+units = ["ALL"] + district_unit_map.get(selected_district, [])
 selected_unit = st.sidebar.selectbox("Unit", units, key='select_unit')
 
 # Future Date Input
 today = datetime.today()
 min_date = today + relativedelta(days=1)  # Ensure only future dates can be selected
-selected_date = st.sidebar.date_input("seasonal prediction", value=min_date, min_value=min_date, key='select_future_date')
+selected_date = st.sidebar.date_input("Seasonal Prediction", value=min_date, min_value=min_date, key='select_future_date')
 
 # Calculate the number of months from the current month
 if selected_date:
