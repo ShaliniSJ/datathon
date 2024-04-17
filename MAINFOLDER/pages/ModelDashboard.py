@@ -21,12 +21,52 @@ def predict_crime(selected_unit, selected_crime, selected_district, input_month,
     # model = load_model('../../originalmodels/karnatakatotal.keras')        
     
     if selected_crime == "ALL" and selected_district == "ALL" and selected_unit=="ALL":
-        model = load_model('originalmodels\karnatakatotal.keras')
-        dfkarnataka = pd.read_csv('originalcsvs\karnataka_total_count.csv',index_col='year_month',parse_dates=True)
+        model = load_model(r'originalmodels\karnatakatotal.keras')
+        dfkarnataka = pd.read_csv(r'originalcsvs\karnataka_total_count.csv',index_col='year_month',parse_dates=True)
         
     elif selected_crime == "MOTOR VEHICLE ACCIDENTS NON-FATAL" and selected_district == "Bagalkot" and selected_unit=="Amengad PS":
-        model = load_model('originalmodels\amengadpsmotornonfatal.keras')
-        dfkarnataka = pd.read_csv('originalcsvs\amengadpsmotornonfatal_count.csv',index_col='year_month',parse_dates=True)
+        model = load_model(r'originalmodels\amengadpsmotornonfatal.keras')
+        dfkarnataka = pd.read_csv(r'originalcsvs\amengadpsmotornonfatal_count.csv',index_col='year_month',parse_dates=True)
+        
+    elif selected_crime == "MOTOR VEHICLE ACCIDENTS NON-FATAL" and selected_district == "Bagalkot" and selected_unit=="Badami PS":
+        model = load_model(r'originalmodels\badamipsmotornonfatal.keras')
+        dfkarnataka = pd.read_csv(r'originalcsvs\badamipsmotornonfatal_count.csv',index_col='year_month',parse_dates=True)
+    
+    elif selected_crime == "MOTOR VEHICLE ACCIDENTS NON-FATAL" and selected_district == "Bagalkot" and selected_unit=="ALL":
+        model = load_model(r'originalmodels\bagalkotmotornonfatal.keras')
+        dfkarnataka = pd.read_csv(r'originalcsvs\bagalkotmotornonfatal_count.csv',index_col='year_month',parse_dates=True) 
+        
+    elif selected_crime == "MOTOR VEHICLE ACCIDENTS NON-FATAL" and selected_district == "Ballari" and selected_unit=="ALL":
+        model = load_model(r'originalmodels\ballarimotornonfatal.keras')
+        dfkarnataka = pd.read_csv(r'originalcsvs\ballarimotornonfatal_count.csv',index_col='year_month',parse_dates=True)  
+        
+    elif selected_crime == "MOTOR VEHICLE ACCIDENTS NON-FATAL" and selected_district == "Belagavi City" and selected_unit=="ALL":
+        model = load_model(r'originalmodels\belagavicitymotornonfatal.keras')
+        dfkarnataka = pd.read_csv(r'originalcsvs\belagavicitymotornonfatal_count.csv',index_col='year_month',parse_dates=True) 
+        
+    elif selected_crime == "MOTOR VEHICLE ACCIDENTS NON-FATAL" and selected_district == "Bengaluru City" and selected_unit=="ALL":
+        model = load_model(r'originalmodels\bengalurucitymotornonfatal.keras')
+        dfkarnataka = pd.read_csv(r'originalcsvs\bengalurucitymotornonfatal_count.csv',index_col='year_month',parse_dates=True)
+    
+    elif selected_crime == "KIDNAPPING AND ABDUCTION" and selected_district == "ALL" and selected_unit=="ALL":
+        model = load_model(r'originalmodels\karnatakakidnapping.keras')
+        dfkarnataka = pd.read_csv(r'originalcsvs\karnataka_kidnapping_count.csv',index_col='year_month',parse_dates=True)
+        
+    elif selected_crime == "POCSO" and selected_district == "ALL" and selected_unit=="ALL":
+        model = load_model(r'originalmodels\karnatakaposco.keras')
+        dfkarnataka = pd.read_csv(r'originalcsvs\karnataka_pocso_count.csv',index_col='year_month',parse_dates=True)
+        
+    elif selected_crime == "MOTOR VEHICLE ACCIDENTS NON-FATAL" and selected_district == "ALL" and selected_unit=="ALL":
+        model = load_model(r'originalmodels\karnatakamotornonfatal.keras')
+        dfkarnataka = pd.read_csv(r'originalcsvs\karnataka_motornonfatal_count.csv',index_col='year_month',parse_dates=True)
+        
+    elif selected_crime == "THEFT" and selected_district == "ALL" and selected_unit=="ALL":
+        model = load_model(r'originalmodels\karnatakatheft.keras')
+        dfkarnataka = pd.read_csv(r'originalcsvs\karnataka_theft_count.csv',index_col='year_month',parse_dates=True)
+        
+    else:
+        model = load_model(r'originalmodels\karnatakatotal.keras')
+        dfkarnataka = pd.read_csv(r'originalcsvs\karnataka_total_count.csv',index_col='year_month',parse_dates=True)        
         
     dfkarnataka.index.freq='MS'
     scaler.fit(dfkarnataka)
