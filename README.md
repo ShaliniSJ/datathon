@@ -52,6 +52,26 @@ Introducing the Predictive Crime Analytics and Visualization System for Karnatak
 
 ![alt text](<MAINFOLDER/ppt in images/Team Enigmatic Energizers_page-0004.jpg>)
 
+## Steps to run the project:
+- Clone this repository locally.
+- Install required libraries and packages.
+- Start new terminal in VSCode by pressing Ctrl+Shift+` or in any other code editor you use and run the below command.
+```
+pip install -r requirements.txt
+```
+- we have included all the packages in requirements.txt. If in case any library or package is missing due to change in the operating system that is being used, the version difference, the package deprecations, etc., we request you to consider the error being displayed and pip install necessary packages and libraries accordingly.
+- The folder in functional_components is our playground used to create the project. We request you to have a look only on the MAINFOLDER which has the finalised code with proper arrangement.
+- To run the project, first open the MAINFOLDER directory. Run the command below for that.
+```
+cd .\MAINFOLDER\
+```
+- Then to view the application, start the streamlit server with the following command.
+```
+streamlit run .\MainDashboard.py
+```
+- This will take you to the Home Page (Main Dashboard) of our application. You can navigate to other pages for visualisation and prediction from the UI itself.
+
+
 ## Future Directions:
 - Continuous refinement of predictive models through feedback and iterative improvement.
 - Integration of additional data sources and advanced analytics techniques to enhance the accuracy and granularity of predictions.
