@@ -77,8 +77,6 @@ streamlit run .\MainDashboard.py
 - Integration of additional data sources and advanced analytics techniques to enhance the accuracy and granularity of predictions.
 - Collaboration with stakeholders to expand the scope and utility of the system for addressing emerging challenges in crime prevention and public safety.
 
-![alt text](<MAINFOLDER/ppt in images/Team Enigmatic Energizers_page-0006.jpg>)
-
 By leveraging advanced data analytics and visualization capabilities, the Predictive Crime Analysis and Visualization System for Karnataka State aims to revolutionize the way crime is understood, predicted, and addressed, ultimately contributing to a safer and more secure society.
 
 ![alt text](<MAINFOLDER/ppt in images/Team Enigmatic Energizers_page-0008.jpg>)
