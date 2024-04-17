@@ -82,7 +82,7 @@ By leveraging advanced data analytics and visualization capabilities, the Predic
 ![alt text](<MAINFOLDER/ppt in images/Team Enigmatic Energizers_page-0008.jpg>)
 
 ## Explanation video available on YouTube
-The whole explanation video is available in YouTube [Click here to watch the youtube link](https://youtu.be/aKzof3DJHA0)<br><br>
+The whole explanation video is available on YouTube [Click here to watch the youtube link](https://youtu.be/aKzof3DJHA0)<br><br>
 ![alt text](<MAINFOLDER/ppt in images/Team Enigmatic Energizers_page-0009.jpg>)
 
 ![alt text](<MAINFOLDER/ppt in images/Team Enigmatic Energizers_page-0010.jpg>)
