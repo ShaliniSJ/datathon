@@ -59,7 +59,7 @@ Introducing the Predictive Crime Analytics and Visualization System for Karnatak
 ```
 pip install -r requirements.txt
 ```
-- we have included all the packages in requirements.txt. If in case any library or package is missing due to change in the operating system that is being used, the version difference, the package deprecations, etc., we request you to consider the error being displayed and pip install necessary packages and libraries accordingly.
+- We have included all the packages in requirements.txt. If in case any library or package is missing due to change in the operating system that is being used, the version difference, the package deprecations, etc., we request you to consider the error being displayed and pip install necessary packages and libraries accordingly.
 - The folder in functional_components is our playground used to create the project. We request you to have a look only on the MAINFOLDER which has the finalised code with proper arrangement.
 - To run the project, first open the MAINFOLDER directory. Run the command below for that.
 ```
