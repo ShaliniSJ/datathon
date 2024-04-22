@@ -9,6 +9,6 @@ imbalanced-learn
 scikit-learn
 tensorflow
 keras
-pytorch
 statsmodels
 Keras-Preprocessing
+torch
