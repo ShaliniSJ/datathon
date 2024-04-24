@@ -60,7 +60,7 @@ Introducing the Predictive Crime Analytics and Visualization System for Karnatak
 pip install -r requirements.txt
 ```
 - We have included all the packages in requirements.txt. If in case any library or package is missing due to change in the operating system that is being used, the version difference, the package deprecations, etc., we request you to consider the error being displayed and pip install necessary packages and libraries accordingly.
-- Make sure the file structure is as below. Make sure you have the datasets required in the Predictive_Crime_Analytics folder. <br>
+- Make sure the file structure is as below. Make sure you have the datasets required in the Predictive_Crime_Analytics folder. We have mentioned all directory paths and file paths as per conventions followed in Windows OS. If you are using Linux or Mac OS, Please change the paths accordingly. <br>
 
 ![alt text](MAINFOLDER/images/file_structure.png) <br>
 
